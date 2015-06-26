@@ -1,0 +1,27 @@
+
+
+
+
+div [data = "GameField"]{
+	border: 1px solid red;
+	
+	height: 50em;
+}
+
+span{
+
+	border: 1px solid grey;
+	width: 15px;
+	height: 20px;
+	margin: 1px;
+	padding: 20px;
+	display: inline-table; 
+}
+
+.wall{
+	background-color: coral;
+}
+
+.panzer{
+	background-color: #556B2F;
+}
