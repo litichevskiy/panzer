@@ -1,27 +1,53 @@
 
+#field {
+    
+    position: relative;
+    top: 1em;
+    left: 1em;
+    list-style-type: none;
 
-
-
-div [data = "GameField"]{
-	border: 1px solid red;
-	
-	height: 50em;
 }
 
-span{
+li {
+    
+    margin: 0px;
+    padding: 0px;
 
-	border: 1px solid grey;
-	width: 15px;
-	height: 20px;
-	margin: 1px;
-	padding: 20px;
-	display: inline-table; 
 }
+
+span {
+
+    width: 3em;
+    height: 3em;
+    display: inline-block;
+    margin: 0.5px;
+    border: 1px solid grey;
+    background-color: #CDAA7D;
+    
+}
+
+
+.panzer1 {
+
+    background-color: rgb(238, 238, 209);  
+   
+}
+
+.panzer2 {
+
+    background-color: rgb(200, 200, 200);  
+   
+}
+
 
 .wall{
-	background-color: coral;
-}
+    
+    background-color: grey;
 
-.panzer{
-	background-color: #556B2F;
+}
+.shell{
+
+    background-color: green;
+    border-radius: 3em;
+    transition : 0.5s;
 }
