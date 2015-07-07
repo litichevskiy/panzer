@@ -1,6 +1,7 @@
 (function ( exports, PubSub ) {
 
-    
+    var that;
+
     function Game ( ) {
 
         PubSub.call( this );
@@ -11,12 +12,13 @@
         this.walls = [];
         this.panzer1;
         this.panzer2;
-        this.process////////
-     
+        this.process;
+        that = this;
 
-        this.subscribe( 'move', this.move );
-        this.subscribe( 'checkCounter', this.checkCounter );
-        this.subscribe( 'gameOver', this.game_over );
+        
+        this.subscribe( 'move', this.move.bind( this ) );
+        this.subscribe( 'checkCounter', this.checkCounter.bind( this ) );
+        this.subscribe( 'removePanzerDirection', this.removePanzerDirection.bind( this ) );
         
     };
 
@@ -26,7 +28,7 @@
 
     
 
-    Game.fn.start = function ( o ) {
+    Game.fn.start = function (  ) {
         var elementGame;
 
         for ( var y = 0; y < this.level[ this.numberLevel ].length; y++ ) {
@@ -68,38 +70,42 @@
     Game.fn.move = function (  ) {
         var Y,X;
 
-        this.storagePanzerAndBullets.forEach( function ( item, i ) {
+        that.storagePanzerAndBullets.forEach( function ( item, i ) {
             Y = item.coord.y,
             X = item.coord.x;
-            if ( item.name  === 'panzer' && this.counter % 2 !== 0 ) {
+            if ( item.name  === 'panzer' && that.counter % 2 !== 0 ) {
                 i++/////
             } else {  
                 if ( item.direction === 'up' && item.coord.y > 0 ) {
-                    this.level[ this.numberLevel ][Y].splice( X, 1, '.' );
+                    that.level[ that.numberLevel ][Y].splice( X, 1, '.' );
                     item.coord.y -= 1;
-                    this.checkNextCell( item, i, { Y : Y, X : X} );
+                    that.checkNextCell( item, i, { Y : Y, X : X} );
                 } else {
                     if ( item.direction === 'down' && item.coord.y < 9 ) {
-                        this.level[ this.numberLevel ][Y].splice( X, 1, '.' );
+                        that.level[ that.numberLevel ][Y].splice( X, 1, '.' );
                         item.coord.y += 1;
-                        this.checkNextCell( item, i, { Y : Y, X : X } );
+                        that.checkNextCell( item, i, { Y : Y, X : X } );
                     } else {
                         if ( item.direction === 'left' && item.coord.x > 0 ) {
-                            this.level[ this.numberLevel ][Y].splice( X, 1, '.' );
+                            that.level[ that.numberLevel ][Y].splice( X, 1, '.' );
                             item.coord.x -= 1;
-                            this.checkNextCell( item, i, { Y : Y, X : X } );
+                            that.checkNextCell( item, i, { Y : Y, X : X } );
                         } else {
                             if ( item.direction === 'right' && item.coord.x < 9 ) {
-                                this.level[ this.numberLevel ][Y].splice( X, 1, '.' );
+                                that.level[ that.numberLevel ][Y].splice( X, 1, '.' );
                                 item.coord.x += 1;
-                                this.checkNextCell( item, i, { Y : Y, X : X } );
+                                that.checkNextCell( item, i, { Y : Y, X : X } );
                             } else {
-                                if ( item.name === 'panzer' && item.coord.y === 0 || item.coord.x === 0 || item.coord.y === 9 || item.coord.x === 9 ) {
-                                    return;
+                                if ( item.name === 'bullet' && item.coord.y === 0 ||  item.name === 'bullet' && item.coord.y === 9 || 
+                                     item.name === 'bullet' && item.coord.x === 0 ||  item.name === 'bullet' && item.coord.x === 9 ) {
+                                        
+                                        that.level[ that.numberLevel ][Y].splice( X, 1, '.' );
+                                        that.storagePanzerAndBullets.splice( i, 1 );                                    
                                 } else {
-                                    if ( item.name === 'bullet' && item.coord.y === 0 || item.coord.x === 0 || item.coord.y === 9 || item.coord.x === 9 ) {
-                                        this.level[ this.numberLevel ][Y].splice( X, 1, '.' );
-                                        this.storagePanzerAndBullets.splice( i, 1 );
+                                    if ( item.name === 'panzer' && item.coord.y === 0 ||  item.name === 'panzer' && item.coord.y === 9 ||
+                                         item.name === 'panzer' && item.coord.x === 0 ||  item.name === 'panzer' && item.coord.x === 9  ) {
+
+                                            return;
                                     };
                                 };
                             };
@@ -111,7 +117,8 @@
 
         });
         this.counter++
-        this.publish( 'checkCounter' );  
+        this.publish( 'checkCounter' );
+        this.publish( 'removePanzerDirection' )
     };
 
    
@@ -119,28 +126,28 @@
         var y = o.coord.y;
         var x = o.coord.x;
         var bullet;
+    
+        if ( o.directFire === 'up' && o.coord.y > 1 ) {
 
-        if ( o.direction === 'up' && o.coord.y > 1 ) {
-
-            bullet = new Bullet( { y : y -1, x : x },  o.direction  );
+            bullet = new Bullet( { y : y -1, x : x },  o.directFire  );
             this.level[ this.numberLevel ][y-1].splice( o.coord.x, 1, bullet );
             this.storagePanzerAndBullets.push( bullet );
         } else {
-            if ( o.direction === 'down' && o.coord.y < 9 ) {
+            if ( o.directFire === 'down' && o.coord.y < 9 ) {
 
-                bullet = new Bullet( { y : y +1, x : x },  o.direction  );
+                bullet = new Bullet( { y : y +1, x : x },  o.directFire  );
                 this.level[ this.numberLevel ][y+1].splice( o.coord.x, 1, bullet );
                 this.storagePanzerAndBullets.push( bullet );
             } else {
-                if ( o.direction === 'left' && o.coord.x > 1 ) {
+                if ( o.directFire === 'left' && o.coord.x > 1 ) {
 
-                    bullet = new Bullet( { y : y, x : x -1 },  o.direction  );
+                    bullet = new Bullet( { y : y, x : x -1 },  o.directFire  );
                     this.level[ this.numberLevel ][y].splice( bullet.coord.x, 1, bullet );
                     this.storagePanzerAndBullets.push( bullet );
                 } else {
-                    if ( o.direction === 'right' && o.coord.x < 9 ) {
+                    if ( o.directFire === 'right' && o.coord.x < 9 ) {
 
-                        bullet = new Bullet( { y : y, x : x +1 },  o.direction  );
+                        bullet = new Bullet( { y : y, x : x +1 },  o.directFire  );
                         this.level[ this.numberLevel ][y].splice( bullet.coord.x, 1, bullet );
                         this.storagePanzerAndBullets.push( bullet );
                     };
@@ -157,23 +164,25 @@
             nextCell = this.level[ this.numberLevel ][y][x];
 
             if ( nextCell === '.' ) {
-                this.level[ this.numberLevel ][y].splice( x, 1, o );
+                this.level[ this.numberLevel ][y].splice( x, 1, o )
             } else {
                 if ( nextCell.name === 'wall' && o.name === 'bullet' ) {
                     nextCell.count++;
-                    this.storagePanzerAndBullets.splice( i, 1 );//проверть удаление
+                    this.storagePanzerAndBullets.splice( i, 1 );
                 } else {
                     if ( nextCell.name === 'panzer' &&  o.name === 'bullet' ) {
                         nextCell.count++;
-                        this.storagePanzerAndBullets.splice( i, 1 );//проверть удаление
+                        this.storagePanzerAndBullets.splice( i, 1 );
                     } else {
                         if ( nextCell.name === 'wall' && o.name === 'panzer' ) {
                             o.coord.y = oldCoord.Y;
                             o.coord.x = oldCoord.X;
+                            this.level[ this.numberLevel ][ oldCoord.Y ].splice( oldCoord.X, 1, o );
                         } else {
                             if ( nextCell.name === 'panzer' && o.name === 'panzer' ) {
                                 o.coord.y = oldCoord.Y;
                                 o.coord.x = oldCoord.X;
+                                this.level[ this.numberLevel ][ oldCoord.Y ].splice( oldCoord.X, 1, o );
                             };
                         };
                     };
@@ -182,31 +191,34 @@
             };
     };
 
+
     Game.fn.checkCounter = function ( ) {
         var y,x;
         this.storagePanzerAndBullets.forEach( function ( item, i ) {
 
-            y = item.coord.y;
-            x = item.coord.x;
-            if( item.name === 'wall' && item.count > 3   ) { 
-                this.storagePanzerAndBullets.splice( i, 1 );
-                this.level[ this.numberLevel ][y].splice( x, 1, '.' );
-            };
             if ( item.name === 'panzer' && item.count > 5 ) {
-                this.publish( 'gameOver' );
+                that.publish( 'Game Over' );
             };
 
         }); 
 
+        this.walls.forEach( function( item, i ) {
+            y = item.coord.y;
+            x = item.coord.x;
+            if( item.name === 'wall' && item.count > 3   ) { 
+                that.walls.splice( i, 1 );
+                that.level[ that.numberLevel ][y].splice( x, 1, '.' );
+            };
+        });
+
+    };
+
+    Game.fn.removePanzerDirection = function ( ) {
+
+        this.panzer1.direction = '';
+        this.panzer2.direction = '';
     };
    
-
-    Game.fn.game_over = function ( ) {
-
-        clearInterval( this.process ); ///
-        alert( 'Game Over' );
-    };
-
 
     Game.fn.level = [
 
@@ -214,13 +226,13 @@
 
             ['.','.','.','.','.','.','.','.','.','.'],
             ['.','.','.','.','.','.','.','.','.','.'],
-            ['.','.','.','.','.','.','|','.','.','.'],
-            ['.','.','.','.','.','.','|','.','.','.'],
+            ['.','.','.','.','.','T1','|','.','.','.'],
+            ['.','T2','.','.','.','.','|','.','.','.'],
             ['.','.','.','|','.','.','|','.','.','.'],
-            ['.','.','.','|','.','.','|','|','.','.'],
+            ['.','.','.','|','.','.','|','.','.','.'],
             ['.','.','.','|','.','.','.','.','.','.'],
-            ['.','.','|','|','.','.','.','.','.','.'],
-            ['.','T1','.','.','.','.','.','T2','.','.'],
+            ['.','.','.','|','.','.','.','.','.','.'],
+            ['.','.','.','.','.','.','.','.','.','.'],
             ['.','.','.','.','.','.','.','.','.','.'],
 
         ],
@@ -242,18 +254,14 @@
         
     ];
 
-    
-    // setInterval( function(){
-    //     game.move();
-    // },2000 );
-    
   
     function  Panzer ( o ) {
         this.name = 'panzer'
         this.count = 1;
         this.coord = o;
-        this.direction = 'up';
-    
+        this.direction;
+        this.directFire;
+       
     };
 
 
@@ -271,18 +279,6 @@
     };
 
     
-    document.onkeydown = function ( event ) {
-        var code = event.keyCode;
-
-        if ( code === 13 ) { return this.createBullets( this.panzer1 ) };
-        if ( code === 27 ) { return this.createBullets( this.panzer2 ) };
-    };
-   
-    
-    
-
-
-
     exports.Game = Game;
 
 })( window, PubSub );

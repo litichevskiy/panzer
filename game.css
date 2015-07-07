@@ -5,37 +5,32 @@
     top: 1em;
     left: 1em;
     list-style-type: none;
+    width: 90%;
 
 }
 
 li {
     
-    margin: 0px;
+    margin: -3px;
     padding: 0px;
 
 }
 
 span {
 
-    width: 3em;
-    height: 3em;
+    width: 2em;
+    height: 2em;
     display: inline-block;
-    margin: 0.5px;
-    border: 1px solid grey;
-    background-color: #CDAA7D;
+    margin: 1px;
+    border: 1px solid lightgrey;
+    transition:0.5s;
     
 }
 
 
-.panzer1 {
+.panzer {
 
-    background-color: rgb(238, 238, 209);  
-   
-}
-
-.panzer2 {
-
-    background-color: rgb(200, 200, 200);  
+    background-color: rgb(238, 238, 145);  
    
 }
 
@@ -45,9 +40,9 @@ span {
     background-color: grey;
 
 }
-.shell{
+.bullet {
 
-    background-color: green;
-    border-radius: 3em;
-    transition : 0.5s;
+    background-color: black;
+    transition-duration : 0.5s;
+
 }

@@ -4,6 +4,7 @@
 
           new xGame
 
-).start();
+).start;
 
  
+
