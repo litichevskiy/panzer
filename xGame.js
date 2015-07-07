@@ -25,16 +25,15 @@
 
         } );
 
-        this.xGame.subscribe( 'Game Over' ,this.game_over );
-        this.xGame.subscribe( 'removeClass' ,this.removeClass );
-        this.xGame.subscribe( 'addClass' ,this.addClass );
+        this.xGame.subscribe( 'Game Over', this.game_over );
 
         that.process = setInterval( function( ) {
 
-        that.xGame.publish( 'removeClass', that.xGame.level[ that.xGame.numberLevel ], that.storageCell);   
-        that.xGame.move(  )
-        that.xGame.publish( 'addClass', that.xGame.level[ that.xGame.numberLevel ], that.storageCell )
-        },SPEED_TO_FRAME_RATE[that.speed] );
+            that.removeClass( that.xGame.level[ that.xGame.numberLevel ], that.storageCell );   
+            that.xGame.move(  )
+            that.addClass( that.xGame.level[ that.xGame.numberLevel ], that.storageCell );
+
+        }, SPEED_TO_FRAME_RATE[ that.speed ] );
             
 
     };

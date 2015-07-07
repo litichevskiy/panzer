@@ -4,7 +4,7 @@
 
           new xGame
 
-).start;
+)
 
  
 

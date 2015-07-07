@@ -1,6 +1,5 @@
 (function ( exports, PubSub ) {
 
-    var that;
 
     function Game ( ) {
 
@@ -14,12 +13,7 @@
         this.panzer2;
         this.process;
         that = this;
-
-        
-        this.subscribe( 'move', this.move.bind( this ) );
-        this.subscribe( 'checkCounter', this.checkCounter.bind( this ) );
-        this.subscribe( 'removePanzerDirection', this.removePanzerDirection.bind( this ) );
-        
+    
     };
 
 
@@ -62,7 +56,7 @@
 
             };
         };
-        this.publish( 'move' );  
+          
 
     };
 
@@ -105,7 +99,6 @@
                                     if ( item.name === 'panzer' && item.coord.y === 0 ||  item.name === 'panzer' && item.coord.y === 9 ||
                                          item.name === 'panzer' && item.coord.x === 0 ||  item.name === 'panzer' && item.coord.x === 9  ) {
 
-                                            return;
                                     };
                                 };
                             };
@@ -117,8 +110,8 @@
 
         });
         this.counter++
-        this.publish( 'checkCounter' );
-        this.publish( 'removePanzerDirection' )
+        this.checkCounter( );
+        this.removePanzerDirection( );
     };
 
    
@@ -205,6 +198,7 @@
         this.walls.forEach( function( item, i ) {
             y = item.coord.y;
             x = item.coord.x;
+
             if( item.name === 'wall' && item.count > 3   ) { 
                 that.walls.splice( i, 1 );
                 that.level[ that.numberLevel ][y].splice( x, 1, '.' );
